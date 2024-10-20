@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Quote Generator</title>
+    <title>Dynamic Quote Generator with Storage</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,6 +20,10 @@
         <button onclick="addQuote()">Add Quote</button>
     </div>
 
+    <!-- Import and Export Buttons -->
+    <button id="exportQuotes">Export Quotes as JSON</button>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+    
     <script src="script.js"></script>
 </body>
 </html>
