@@ -100,7 +100,7 @@ async function addQuote() {
     await syncWithServer(); // Sync the new quote with the server
 }
 
-// Fetch quotes from server using async/await
+// Fetch quotes from the server
 async function fetchQuotesFromServer() {
     try {
         const response = await fetch(SERVER_URL);
