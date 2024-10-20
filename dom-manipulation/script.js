@@ -165,6 +165,7 @@ async function syncQuotes() {
     }
 
     saveQuotes();
+    alert("Quotes synced with server!"); // Notify user that quotes are synced
 }
 
 // Show random quote
