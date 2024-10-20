@@ -100,50 +100,28 @@ function addQuote() {
     syncWithServer(); // Sync the new quote with the server
 }
 
-// Fetch data from server and handle conflicts
-function syncWithServer() {
-    // Simulate fetching from server
+// Fetch quotes from server
+function fetchQuotesFromServer() {
     fetch(SERVER_URL)
         .then(response => response.json())
         .then(serverQuotes => {
-            const serverQuoteTexts = serverQuotes.map(quote => quote.text);
+            const serverQuoteTexts = serverQuotes.map(quote => quote.title); // Mock server uses 'title' field for quotes
             const localQuoteTexts = quotes.map(quote => quote.text);
 
-            // Find discrepancies: if the server has quotes that local storage doesn't
-            const newQuotesFromServer = serverQuotes.filter(serverQuote => !localQuoteTexts.includes(serverQuote.text));
+            // Find new quotes from server that aren't in local storage
+            const newQuotesFromServer = serverQuotes
+                .filter(serverQuote => !localQuoteTexts.includes(serverQuote.title))
+                .map(serverQuote => ({
+                    text: serverQuote.title,
+                    category: "General" // Assign a default category if server doesn't have one
+                }));
 
             if (newQuotesFromServer.length > 0) {
-                quotes = [...quotes, ...newQuotesFromServer]; // Merge server quotes into local quotes
+                quotes = [...quotes, ...newQuotesFromServer];
                 saveQuotes();
-                alert('New quotes fetched from the server and merged into local data.');
+                alert('New quotes fetched from the server and added to local data.');
+                filterQuotes();
             }
-
-            // If a conflict arises, server's quotes take precedence
-            const conflictingQuotes = quotes.filter(localQuote => serverQuoteTexts.includes(localQuote.text));
-            if (conflictingQuotes.length > 0) {
-                alert('Conflicts found! Server quotes will take precedence.');
-            }
-
-            filterQuotes(); // Refresh the display with the merged data
         })
         .catch(error => {
-            console.error("Error syncing with the server:", error);
-        });
-}
-
-// Show random quote
-function showRandomQuote() {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const randomQuote = quotes[randomIndex];
-    document.getElementById('quoteDisplay').innerHTML = `<p>"${randomQuote.text}" - ${randomQuote.category}</p>`;
-}
-
-// Sync every 30 seconds with the server
-setInterval(syncWithServer, SYNC_INTERVAL);
-
-// On page load
-document.addEventListener('DOMContentLoaded', function() {
-    loadQuotes();
-    document.getElementById('newQuote').addEventListener('click', showRandomQuote);
-    document.getElementById('addQuoteBtn').addEventListener('click', addQuote);
-});
+            console.error('Error fetching quotes from the server:',
