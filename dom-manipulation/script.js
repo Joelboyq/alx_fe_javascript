@@ -68,6 +68,15 @@ function populateCategories() {
     });
 }
 
+// Function to display a random quote
+function showRandomQuote() {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const randomQuote = quotes[randomIndex];
+    
+    const quoteDisplay = document.getElementById('quoteDisplay');
+    quoteDisplay.innerHTML = `<p>"${randomQuote.text}" - ${randomQuote.category}</p>`;
+}
+
 // Function to add a new quote dynamically
 function addQuote() {
     const newQuoteText = document.getElementById('newQuoteText').value;
@@ -108,6 +117,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Attach export functionality to the button
     document.getElementById('exportQuotes').addEventListener('click', exportQuotesAsJson);
+
+    // Attach random quote functionality to the button
+    document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 });
 
 // Export quotes as a JSON file
