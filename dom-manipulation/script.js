@@ -97,7 +97,7 @@ async function addQuote() {
 
     alert("New quote added successfully!");
     filterQuotes();
-    await syncWithServer(); // Sync the new quote with the server
+    await syncQuotes(); // Sync the new quote with the server
 }
 
 // Fetch quotes from the server
@@ -154,7 +154,7 @@ async function postQuoteToServer(quote) {
 }
 
 // Sync local quotes with server data
-async function syncWithServer() {
+async function syncQuotes() {
     await fetchQuotesFromServer();
 
     // POST new quotes to the server
@@ -175,7 +175,7 @@ function showRandomQuote() {
 }
 
 // Sync every 30 seconds with the server
-setInterval(syncWithServer, SYNC_INTERVAL);
+setInterval(syncQuotes, SYNC_INTERVAL);
 
 // On page load
 document.addEventListener('DOMContentLoaded', function() {
