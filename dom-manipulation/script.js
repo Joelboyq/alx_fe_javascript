@@ -144,7 +144,7 @@ async function postQuoteToServer(quote) {
         });
 
         if (response.ok) {
-            alert('Quote successfully synced with the server!');
+            alert('Quote successfully synced with the server!'); // Notify success
         } else {
             alert('Failed to sync the quote with the server.');
         }
