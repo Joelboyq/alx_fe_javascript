@@ -100,28 +100,57 @@ function addQuote() {
     syncWithServer(); // Sync the new quote with the server
 }
 
-// Fetch quotes from server
-function fetchQuotesFromServer() {
-    fetch(SERVER_URL)
-        .then(response => response.json())
-        .then(serverQuotes => {
-            const serverQuoteTexts = serverQuotes.map(quote => quote.title); // Mock server uses 'title' field for quotes
-            const localQuoteTexts = quotes.map(quote => quote.text);
+// Fetch quotes from server using async/await
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(SERVER_URL);
+        const serverQuotes = await response.json();
 
-            // Find new quotes from server that aren't in local storage
-            const newQuotesFromServer = serverQuotes
-                .filter(serverQuote => !localQuoteTexts.includes(serverQuote.title))
-                .map(serverQuote => ({
-                    text: serverQuote.title,
-                    category: "General" // Assign a default category if server doesn't have one
-                }));
+        const serverQuoteTexts = serverQuotes.map(quote => quote.title); // Mock server uses 'title' field for quotes
+        const localQuoteTexts = quotes.map(quote => quote.text);
 
-            if (newQuotesFromServer.length > 0) {
-                quotes = [...quotes, ...newQuotesFromServer];
-                saveQuotes();
-                alert('New quotes fetched from the server and added to local data.');
-                filterQuotes();
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching quotes from the server:',
+        // Find new quotes from server that aren't in local storage
+        const newQuotesFromServer = serverQuotes
+            .filter(serverQuote => !localQuoteTexts.includes(serverQuote.title))
+            .map(serverQuote => ({
+                text: serverQuote.title,
+                category: "General" // Assign a default category if server doesn't have one
+            }));
+
+        if (newQuotesFromServer.length > 0) {
+            quotes = [...quotes, ...newQuotesFromServer];
+            saveQuotes();
+            alert('New quotes fetched from the server and added to local data.');
+            filterQuotes();
+        }
+    } catch (error) {
+        console.error('Error fetching quotes from the server:', error);
+    }
+}
+
+// Sync local quotes with server data
+async function syncWithServer() {
+    await fetchQuotesFromServer();
+
+    // You can implement posting new quotes to the server here if needed
+    // For example:
+    // const newQuotes = quotes.filter(quote => !quote.synced);
+    // newQuotes.forEach(quote => postToServer(quote));
+}
+
+// Show random quote
+function showRandomQuote() {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const randomQuote = quotes[randomIndex];
+    document.getElementById('quoteDisplay').innerHTML = `<p>"${randomQuote.text}" - ${randomQuote.category}</p>`;
+}
+
+// Sync every 30 seconds with the server
+setInterval(syncWithServer, SYNC_INTERVAL);
+
+// On page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadQuotes();
+    document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+    document.getElementById('addQuoteBtn').addEventListener('click', addQuote);
+});
